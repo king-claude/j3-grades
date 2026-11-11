@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>九三班成绩发布页</title>
+<meta name="description" content="九三班成绩发布页：输入姓名和密码，查询本人各科成绩与总分。">
+<meta name="theme-color" content="#eef1fa">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%234f46e5'/%3E%3Cpath d='M18 44V26l14-8 14 8v18' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M26 44V32h12v12' fill='none' stroke='white' stroke-width='4' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <span class="blob blob-a"></span>
+  <span class="blob blob-b"></span>
+  <span class="blob blob-c"></span>
+  <span class="grid-lines"></span>
+</div>
+
+<header class="site-header">
+  <p class="eyebrow">
+    <span class="pulse-dot"></span>
+    <span id="classTag">九年级三班</span>
+    <span class="eyebrow-sep">/</span>
+    <span>班级成绩查询</span>
+  </p>
+  <h1 class="title">九三班成绩发布页</h1>
+  <p class="subtitle" id="examLine">正在加载成绩信息…</p>
+</header>
+
+<main class="page">
+
+  <!-- 查询区 -->
+  <section class="search-card" aria-labelledby="searchTitle">
+    <div class="search-head">
+      <h2 id="searchTitle">查询我的成绩</h2>
+      <div class="head-badges">
+        <span class="lock-badge" id="lockBadge" hidden></span>
+        <span class="count-badge" id="countBadge" hidden></span>
+      </div>
+    </div>
+
+    <form id="searchForm" novalidate>
+      <div class="fields">
+        <div class="field">
+          <label class="field-label" for="nameInput">姓名</label>
+          <div class="input-wrap">
+            <div class="input-row" id="inputRow">
+              <span class="input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.2-3.2"></path>
+                </svg>
+              </span>
+              <input id="nameInput" name="name" type="text" inputmode="text" autocomplete="off" autocapitalize="off"
+                     spellcheck="false" placeholder="你的姓名，如：张三" aria-describedby="hint"
+                     role="combobox" aria-expanded="false" aria-controls="suggest" aria-autocomplete="list">
+            </div>
+            <ul class="suggest" id="suggest" role="listbox" aria-label="姓名联想" hidden></ul>
+          </div>
+        </div>
+
+        <div class="field" id="pwField">
+          <label class="field-label" for="pwInput">
+            查询密码
+            <span class="field-tip" id="pwTip">身份证号后六位</span>
+          </label>
+          <div class="input-row" id="pwRow">
+            <span class="input-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="10.5" width="16" height="9.5" rx="2.2"></rect>
+                <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"></path>
+              </svg>
+            </span>
+            <input id="pwInput" name="password" type="password" inputmode="numeric" maxlength="16"
+                   autocomplete="off" autocapitalize="off" spellcheck="false"
+                   placeholder="请输入密码" enterkeyhint="go" aria-describedby="hint">
+            <button type="button" class="pw-toggle" id="pwToggle" aria-pressed="false" aria-label="显示密码">显示</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block" id="submitBtn">
+        <span>查询成绩</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path>
+        </svg>
+      </button>
+
+      <p class="hint" id="hint">输入姓名和密码后点击查询；首次查询成功会绑定本机，12 小时内不能查询其他姓名。</p>
+      <p class="form-note" id="formNote">密码由班主任发放，请勿转告他人 · 查完记得点右上角关闭页面</p>
+    </form>
+  </section>
+
+  <!-- 首次进入的说明 -->
+  <section class="intro" id="intro" aria-labelledby="introTitle">
+    <div class="intro-card">
+      <span class="intro-ico">01</span>
+      <h3>输入姓名</h3>
+      <p>姓名中的空格、全角半角都能识别，例如「张 三」也可查到。</p>
+    </div>
+    <div class="intro-card">
+      <span class="intro-ico">02</span>
+      <h3>查看各科</h3>
+      <p>各科得分、满分与等级一目了然，并附得分率参考。</p>
+    </div>
+    <div class="intro-card">
+      <span class="intro-ico">03</span>
+      <h3>保存成绩单</h3>
+      <p>可一键打印或另存为 PDF，方便交给家长查看。</p>
+    </div>
+  </section>
+
+  <!-- 成绩结果 -->
+  <section id="result" class="result" hidden aria-live="polite"></section>
+
+  <!-- 未查询到 -->
+  <section id="notFound" class="not-found" hidden aria-live="polite"></section>
+
+</main>
+
+<footer class="site-footer">
+  <p class="footer-main">成绩数据由班主任录入并发布 · 本页仅限九三班同学与家长查询</p>
+  <p class="footer-sub">
+    <span id="updatedLine">更新时间：—</span>
+    <span class="footer-dot">·</span>
+    <span>总分由系统自动计算</span>
+  </p>
+  <p class="sample-flag" id="sampleFlag" hidden>⚠ 当前展示的是示例数据，收到正式成绩表后将替换</p>
+</footer>
+
+<script src="data/grades.js"></script>
+<script src="assets/js/app.js"></script>
+<noscript>
+  <p class="noscript">本页需要浏览器开启 JavaScript 才能查询成绩，请开启后刷新页面。</p>
+</noscript>
+</body>
+</html>
